@@ -3,20 +3,25 @@ const { v4 } = require("uuid");
 const cheerio = require("cheerio");
 const cors = require("cors");
 const rs = require("request");
+const https = require("https");
+const fs = require("fs");
+var privateKey  = fs.readFileSync("PATH_TO_MY_KEY", "utf8");
+var certificate = fs.readFileSync("PATH_TO_MY_CERTIFICATE", "utf8");
+var credentials = {key: privateKey, cert: certificate};
 const port = 5000;
 app.use(cors());
-const baseURL = "https://gogoanime.so/";
+const baseURL = "https://gogoanime.sh/";
 
 app.get("/api/home", (req, res) => {
   let info = {
-    popular: "https://anime-x.vercel.app/api/popular/:page",
-    details: "https://anime-x.vercel.app/api/details/:id",
-    search: "https://anime-x.vercel.app/api/search/:word/:page",
-    episode_link: "https://anime-x.vercel.app/api/watching/:id/:episode",
-    genre: "https://anime-x.vercel.app/api/genre/:type/:page",
-    recently_added: "https://anime-x.vercel.app/api/recentlyadded/:page",
-    anime_list: "https://anime-x.vercel.app/api/list/:page",
-    genrelist: "https://anime-x.vercel.app/api/genrelist",
+    popular: "https://2dgirls.tech/api/popular/:page",
+    details: "https://2dgirls.tech/api/details/:id",
+    search: "https://2dgirls.tech/api/search/:word/:page",
+    episode_link: "https://2dgirls.tech/api/watching/:id/:episode",
+    genre: "https://2dgirls.tech/api/genre/:type/:page",
+    recently_added: "https://2dgirls.tech/api/recentlyadded/:page",
+    anime_list: "https://2dgirls.tech/api/list/:page",
+    genrelist: "https://2dgirls.tech/api/genrelist",
   };
   res.send(info);
 });
@@ -327,7 +332,7 @@ app.get("/api/list/:variable/:page", (req, res) => {
     }
   });
 });
-
-app.listen(port, () => console.log("running on 5000"));
+var httpsServer = https.createServer(credentials, app);
+httpsServer.listen(port, () => console.log("running on 5000"));
 
 module.exports = app;
