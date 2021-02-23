@@ -187,9 +187,14 @@ app.get("/api/watching/:id/:episode", (req, res) => {
               var $ = cheerio.load(html);
               $("a").each((i, e) => {
                 if (e.attribs.download === "") {
+                  var li = e.children[0].data
+                    .slice(21)
+                    .replace("(", "")
+                    .replace(")", "")
+                    .replace(" - mp4", "");
                   nl.push({
-                    link: e.attribs.href,
-                    name: e.children[0].data.slice(21),
+                    src: e.attribs.href,
+                    size: li == "HDP" ? "High Speed" : li,
                   });
                 }
               });
