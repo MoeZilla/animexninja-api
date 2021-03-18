@@ -5,12 +5,12 @@ const cors = require("cors");
 const rs = require("request");
 const https = require("https");
 const fs = require("fs");
-var privateKey  = fs.readFileSync("PATH_TO_MY_KEY", "utf8");
-var certificate = fs.readFileSync("PATH_TO_MY_CERTIFICATE", "utf8");
+var privateKey  = fs.readFileSync("/etc/letsencrypt/live/2dgirls.tech/privkey.pem", "utf8");
+var certificate = fs.readFileSync("/etc/letsencrypt/live/2dgirls.tech/fullchain.pem", "utf8");
 var credentials = {key: privateKey, cert: certificate};
 const port = 5000;
 app.use(cors());
-const baseURL = "https://gogoanime.sh/";
+const baseURL = "https://gogoanime.ai/";
 
 app.get("/api/home", (req, res) => {
   let info = {
