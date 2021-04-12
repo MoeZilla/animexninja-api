@@ -3,11 +3,6 @@ const { v4 } = require("uuid");
 const cheerio = require("cheerio");
 const cors = require("cors");
 const rs = require("request");
-const https = require("https");
-const fs = require("fs");
-var privateKey  = fs.readFileSync("/etc/letsencrypt/live/2dgirls.tech/privkey.pem", "utf8");
-var certificate = fs.readFileSync("/etc/letsencrypt/live/2dgirls.tech/fullchain.pem", "utf8");
-var credentials = {key: privateKey, cert: certificate};
 const port = 5000;
 app.use(cors());
 const baseURL = "https://gogoanime.ai/";
@@ -337,7 +332,6 @@ app.get("/api/list/:variable/:page", (req, res) => {
     }
   });
 });
-var httpsServer = https.createServer(credentials, app);
-httpsServer.listen(port, () => console.log("running on 5000"));
+app.listen(port, () => console.log("running on 5000"));
 
 module.exports = app;
