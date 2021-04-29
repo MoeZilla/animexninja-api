@@ -106,6 +106,72 @@ app.get("/api/details/:id", (req, res) => {
   });
 });
 
+app.get("/api/detailshtml/:id", (req, res) => {
+  let results = [];
+
+  siteUrl = `${baseURL}category/${req.params.id}`;
+  rs(siteUrl, (err, resp, html) => {
+    if (!err) {
+      try {
+        var $ = cheerio.load(html);
+        var type = " ";
+        var summary = "";
+        var relased = "";
+        var status = "";
+        var genres = "";
+        var Othername = "";
+        var title = $(".anime_info_body_bg").children("h1").text();
+        var image = $(".anime_info_body_bg").children("img").attr().src;
+
+        $("p.type").each(function (index, element) {
+          if ("Type: " == $(this).children("span").text()) {
+            type = $(this).text().slice(15, -5);
+          } else if ("Plot Summary: " == $(this).children("span").text()) {
+            summary = $(this).text().slice(14);
+          } else if ("Released: " == $(this).children("span").text()) {
+            relased = $(this).text().slice(10);
+          } else if ("Status: " == $(this).children("span").text()) {
+            status = $(this).text().slice(8);
+          } else if ("Genre: " == $(this).children("span").text()) {
+            genres = $(this).text().slice(20, -4);
+            genres = genres.split(",");
+            genres = genres.join(",");
+          } else "Other name: " == $(this).children("span").text();
+          {
+            Othername = $(this).text().slice(12);
+          }
+        });
+        genres.replace(" ");
+        var totalepisode = $("#episode_page")
+          .children("li")
+          .last()
+          .children("a")
+          .attr().ep_end;
+        results[0] = {
+          title,
+          image,
+          type,
+          summary,
+          relased,
+          genres,
+          status,
+          totalepisode,
+          Othername,
+        };
+        var resultstring = "";
+        var ep = 1;
+        while (ep <= parseInt(results[0].totalepisode)) {
+          resultstring += `<div id="episode-${ep}:${req.params.id}">${JSON.stringify(results[0])}</div>\n`;
+          ep++;
+        }
+        res.status(200).send(resultstring);
+      } catch (e) {
+        res.status(404).json({ e: "404 fuck off!!!!!" });
+      }
+    }
+  });
+});
+
 app.get("/api/search/:word/:page", (req, res) => {
   let results = [];
   var word = req.params.word;
