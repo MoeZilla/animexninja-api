@@ -278,6 +278,69 @@ app.get("/api/watching/:id/:episode", (req, res) => {
   });
 });
 
+app.get("/api/watchinghtml/:id/:episode", (req, res) => {
+  let link = "";
+  let nl = [];
+  var totalepisode = [];
+  var id = req.params.id;
+  var episode = req.params.episode;
+  url = `${baseURL + id}-episode-${episode}`;
+  rs(url, async (err, resp, html) => {
+    if (!err) {
+      try {
+        var $ = cheerio.load(html);
+
+        if ($(".entry-title").text() === "404") {
+          return res
+            .status(404)
+            .json({ links: [], link, totalepisode: totalepisode });
+        }
+
+        totalepisode = $("#episode_page")
+          .children("li")
+          .last()
+          .children("a")
+          .text()
+          .split("-");
+        totalepisode = totalepisode[totalepisode.length - 1];
+        link = $("li.anime").children("a").attr("data-video");
+        const cl = "http:" + link.replace("streaming.php", "download");
+        rs(cl, (err, resp, html) => {
+          if (!err) {
+            try {
+              var $ = cheerio.load(html);
+              $("a").each((i, e) => {
+                if (e.attribs.download === "") {
+                  var li = e.children[0].data
+                    .slice(21)
+                    .replace("(", "")
+                    .replace(")", "")
+                    .replace(" - mp4", "");
+                  nl.push({
+                    src: e.attribs.href,
+                    size: li == "HDP" ? "High Speed" : li,
+                  });
+                }
+              });
+              return res
+                .status(200)
+                .send(JSON.stringify({ links: nl, link, totalepisode: totalepisode }));
+            } catch (e) {
+              return res
+                .status(200)
+                .send(JSON.stringify({ links: nl, link, totalepisode: totalepisode }));
+            }
+          }
+        });
+      } catch (e) {
+        return res
+          .status(404)
+          .json({ links: [], link: "", totalepisode: totalepisode });
+      }
+    }
+  });
+});
+
 app.get("/api/genre/:type/:page", (req, res) => {
   var results = [];
   var type = req.params.type;
