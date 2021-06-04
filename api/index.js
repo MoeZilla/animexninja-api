@@ -185,7 +185,7 @@ app.get("/api/search/:word/:page", (req, res) => {
     if (!err) {
       try {
         var $ = cheerio.load(html);
-        let isnext = $(this).children("div.pagination").text == ""
+        let isnext = $(this).children("div.pagination").text() == ""
         $(".img").each(function (index, element) {
           let title = $(this).children("a").attr().title;
           let id = $(this).children("a").attr().href.slice(10);
@@ -381,7 +381,7 @@ app.get("/api/recentlyadded/:page", (req, res) => {
     if (!err) {
       try {
         var $ = cheerio.load(html);
-        let isnext = $(this).children("div.pagination").text == ""
+        let isnext = $(this).children("div.pagination").text() == ""
         $(".img").each(function (index, element) {
           let title = $(this).children("a").attr().title;
           let id = $(this).children("a").attr().href.slice(1);
